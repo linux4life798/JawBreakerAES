@@ -17,7 +17,7 @@ module JB_AES_Encrypt(clk, nRst, nStart, nDone, key, blockin, blockout);
     output logic [BLOCK_WIDTH-1:0]  blockout; // enrypted block out
 
     /* AES Internal State */
-	aes_state_t state;
+    aes_state_t state;
 
     // super safe XOR encryption
     assign blockout = blockin ^ key;
@@ -50,7 +50,7 @@ module JB_AES_Decrypt(clk, nRst, nStart, nDone, key, blockin, blockout);
     output logic [BLOCK_WIDTH-1:0]  blockout; // unencrypted block out
 
     /* AES Internal State */
-	aes_state_t state;
+    aes_state_t state;
 
     // super safe XOR encryption
     assign blockout = blockin ^ key;
