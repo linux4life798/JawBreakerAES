@@ -17,7 +17,7 @@ module JB_AES_128Block(blockin, blockout);
 endmodule
 
 
-module JB_AES_RowShift(blockin, blockout);
+module JB_AES_ShiftRows(blockin, blockout);
     input  block128_t blockin;
     output block128_t blockout;
 
@@ -30,12 +30,40 @@ module JB_AES_RowShift(blockin, blockout);
     end
 endmodule
 
-module JB_AES_FirstRound(roundkey, blockin, blockout);
+module JB_AES_SubBytes(blockin, blockout);
+    input  block128_t blockin;
+    output block128_t blockout;
+
+    /* Preform The Rotations */
+    //TODO: Fill In SubBytes
+    assign blockout = blockin;
+endmodule
+
+module JB_AES_MixColumns(blockin, blockout);
+    input  block128_t blockin;
+    output block128_t blockout;
+
+    /* Preform The Rotations */
+    //TODO: Fill In MixColumns
+    assign blockout = blockin;
+endmodule
+
+module JB_AES_AddRoundKey(roundkey, blockin, blockout);
     input  block128_t roundkey;
     input  block128_t blockin;
     output block128_t blockout;
 
     assign blockout = blockin ^ roundkey;
+endmodule
+
+/* Higher Level Modules */
+
+module JB_AES_FirstRound(roundkey, blockin, blockout);
+    input  block128_t roundkey;
+    input  block128_t blockin;
+    output block128_t blockout;
+
+    JB_AES_AddRoundKey(roundkey, blockin, blockout);
 endmodule
 
 module JB_AES_Round(roundkey, blockin, blockout);
