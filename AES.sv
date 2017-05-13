@@ -5,10 +5,14 @@
 
 typedef enum logic [1:0] {WAIT, PHASE1, PHASE2, DONE} aes_state_t;
 
-typedef logic [4-1:0][4-1:0][8-1:0] block128_t;
+/* Using C style array indices to match typical AES implementations */
+typedef logic [0:4-1][0:4-1][8-1:0] block128_t;
 
 /* Should Probably Facilitate The Common AES Phase Modules Here */
 
+/**
+ * This simply labels the bit stream with the packed block_t type
+ */
 module JB_AES_128Block(blockin, blockout);
     input logic [128-1:0] blockin;
     output block128_t blockout;
@@ -24,9 +28,9 @@ module JB_AES_ShiftRows(blockin, blockout);
     /* Preform The Rotations */
     always_comb begin
         blockout[0] = {blockin[0]}; // rotate none
-        blockout[1] = {blockin[1][2:0], blockin[1][3]}; // rotate once
-        blockout[2] = {blockin[2][1:0], blockin[1][3], blockin[1][2]};
-        blockout[3] = {blockin[2][0], blockin[1][3], blockin[1][2], blockin[1][1]};
+        blockout[1] = {blockin[1][1:3], blockin[1][0]}; // rotate once
+        blockout[2] = {blockin[2][2:3], blockin[2][0:1]};
+        blockout[3] = {blockin[3][3], blockin[3][0:2]};
     end
 endmodule
 
