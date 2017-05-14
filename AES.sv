@@ -182,7 +182,8 @@ module JB_AES_FirstRound(roundkey, blockin, blockout);
     input  block128_t blockin;
     output block128_t blockout;
 
-    JB_AES_AddRoundKey(roundkey, blockin, blockout);
+    // 1. AddRoundKey
+    JB_AES_AddRoundKey addroundkey(roundkey, blockin, blockout);
 endmodule
 
 module JB_AES_Round(roundkey, blockin, blockout);
@@ -190,8 +191,16 @@ module JB_AES_Round(roundkey, blockin, blockout);
     input  block128_t blockin;
     output block128_t blockout;
 
-    // TODO: Implement standard round here
-    assign blockout = blockin ^ roundkey;
+    block128_t blockout1, blockout2, blockout3;
+
+    // 1. SubBytes
+    JB_AES_SubBytes    subbytes   (blockin, blockout1);
+    // 2. ShiftRows
+    JB_AES_ShiftRows   shiftrows  (blockout1, blockout2);
+    // 3. MixColumns
+    JB_AES_MixColumns  mixcolumns (blockout2, blockout3);
+    // 4. AddRoundKey
+    JB_AES_AddRoundKey addroundkey(roundkey, blockout3, blockout);
 endmodule
 
 module JB_AES_LastRound(roundkey, blockin, blockout);
@@ -199,8 +208,14 @@ module JB_AES_LastRound(roundkey, blockin, blockout);
     input  block128_t blockin;
     output block128_t blockout;
 
-    // TODO: Implement last round here
-    assign blockout = blockin ^ roundkey;
+    block128_t blockout1, blockout2;
+
+    // 1. SubBytes
+    JB_AES_SubBytes    subbytes   (blockin, blockout1);
+    // 2. ShiftRows
+    JB_AES_ShiftRows   shiftrows  (blockout1, blockout2);
+    // 3. AddRoundKey
+    JB_AES_AddRoundKey addroundkey(roundkey, blockout2, blockout);
 endmodule
 
 // module JB_AES_LastRound(key, blockin, blockout) begin
