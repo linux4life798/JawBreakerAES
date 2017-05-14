@@ -175,7 +175,10 @@ module JB_AES_RoundKey(roundconstants, roundkeyin, roundkeyout);
 
     assign roundkeyout = roundkeyin;
 endmodule
-/* Higher Level Modules */
+
+/*********************************************************/
+/*               Higher Level Modules                    */
+/*********************************************************/
 
 module JB_AES_FirstRound(roundkey, blockin, blockout);
     input  block128_t roundkey;
@@ -218,9 +221,10 @@ module JB_AES_LastRound(roundkey, blockin, blockout);
     JB_AES_AddRoundKey addroundkey(roundkey, blockout2, blockout);
 endmodule
 
-// module JB_AES_LastRound(key, blockin, blockout) begin
-    
-// end
+
+/*********************************************************/
+/*                  Interface Modules                    */
+/*********************************************************/
 
 module JB_AES_Encrypt(clk, nRst, nStart, nDone, key, blockin, blockout);
     parameter BLOCK_WIDTH = 128; // 128, 192, or 256
