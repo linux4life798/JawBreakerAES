@@ -79,8 +79,8 @@ module JB_AES_MixColumns(blockin, blockout);
     input  block128_t blockin;
     output block128_t blockout;
 
-   logic [15:0][0:15][7:0] gt_2,gt_3;
-   logic [3:0][0:3][1:0] mds_mat;
+   logic [0:15][0:15][7:0] gt_2,gt_3;
+   logic [0:3][0:3][1:0] mds_mat;
 
    //Multiply by 2 Lookup table
    assign gt_2[0] = {8'h00,8'h02,8'h04,8'h06,8'h08,8'h0a,8'h0c,8'h0e,8'h10,8'h12,8'h14,8'h16,8'h18,8'h1a,8'h1c,8'h1e};
