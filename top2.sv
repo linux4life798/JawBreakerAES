@@ -64,7 +64,7 @@ module testbench2();
 
 		/* Start Encryption */
 		$display("# Starting Encryption");
-		key     <= 128'd27;
+		// key     <= 128'd27;
         key <= key_block_in;
 		// plainin <= 128'h52;
         plainin <= state_block;
