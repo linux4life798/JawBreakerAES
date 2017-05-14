@@ -226,6 +226,66 @@ endmodule
 /*                  Interface Modules                    */
 /*********************************************************/
 
+/**
+ * This is the piplined version of AES encryption.
+ * Each clock will allow a new segment of data to be loaded,
+ * the amount of clock cycles before the output data is good is 11.
+ */
+module JB_AES_Encrypt_Pipe(clk, nRst, key, blockin, blockout);
+    parameter BLOCK_WIDTH = 128; // 128, 192, or 256
+    parameter NUMBER_ROUNDS = 10;
+    input  logic clk, nRst;
+    input  logic [BLOCK_WIDTH-1:0]  key;
+    input  logic [BLOCK_WIDTH-1:0]  blockin;  // unencrypted block in
+    output logic [BLOCK_WIDTH-1:0]  blockout; // enrypted block out
+
+    roundconstants_t roundconstants;
+
+    /* Registers for round information */
+    block128_t roundblock[0:10];
+    block128_t roundkey[0:10];   // last round key is never used
+    /* Combinational connections */
+    block128_t roundblockout[0:10];
+    block128_t roundkeyout[0:10];
+
+    /* Setup our round constants */
+    JB_AES_RoundConstants roundc(roundconstants);
+
+    genvar i;
+    generate
+        // Do rounds 0 to 10
+        for (i = 0; i <= NUMBER_ROUNDS; i++) begin : innerloop
+            if(i == 0) begin
+                // 1. First Round
+                assign roundkeyout[0] = key;
+                JB_AES_FirstRound firstround
+                    (key, blockin, roundblockout[0]);
+            end else if (i < NUMBER_ROUNDS) begin
+                // 2. Middle Rounds
+                JB_AES_RoundKey #(i) middleroundkey
+                    (roundconstants, roundkey[i-1], roundkeyout[i]);
+                JB_AES_Round middleround
+                    (roundkeyout[i], roundblock[i-1], roundblockout[i]);
+            end else begin
+                // 3. Final Round
+                JB_AES_RoundKey  #(NUMBER_ROUNDS) finalroundkey
+                    (roundconstants, roundkey[i-1], roundkeyout[i]);
+                JB_AES_LastRound lastround
+                    (roundkeyout[i], roundblock[i-1], roundblockout[i]);
+            end
+
+            // Gate output
+            always_ff @(posedge clk) begin
+                roundkey[i]   <= roundkeyout[i];
+                roundblock[i] <= roundblockout[i];
+            end
+        end
+    endgenerate
+
+    assign blockout = roundblock[NUMBER_ROUNDS];
+
+endmodule
+
 module JB_AES_Encrypt(clk, nRst, nStart, nDone, key, blockin, blockout);
     parameter BLOCK_WIDTH = 128; // 128, 192, or 256
     input  logic clk, nRst;
