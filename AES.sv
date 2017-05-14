@@ -164,6 +164,17 @@ module JB_AES_AddRoundKey(roundkey, blockin, blockout);
     assign blockout = blockin ^ roundkey;
 endmodule
 
+/**
+ * Generate the round key from previous key
+ */
+module JB_AES_RoundKey(roundconstants, roundkeyin, roundkeyout);
+    parameter ROUND = 0;
+    input  roundconstants_t roundconstants;
+    input  block128_t roundkeyin;
+    output block128_t roundkeyout;
+
+    assign roundkeyout = roundkeyin;
+endmodule
 /* Higher Level Modules */
 
 module JB_AES_FirstRound(roundkey, blockin, blockout);
