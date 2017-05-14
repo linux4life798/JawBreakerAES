@@ -8,6 +8,15 @@ typedef enum logic [1:0] {WAIT, PHASE1, PHASE2, DONE} aes_state_t;
 /* Using C style array indices to match typical AES implementations */
 typedef logic [0:4-1][0:4-1][8-1:0] block128_t;
 
+typedef logic [7:0] roundconstants_t [0:9];
+
+module JB_AES_RoundConstants(roundconstants);
+    output roundconstants_t roundconstants;
+    assign roundconstants = '{
+        8'h01, 8'h02, 8'h04, 8'h08, 8'h10, 8'h20, 8'h40, 8'h80, 8'h1b, 8'h36
+    };
+endmodule
+
 /* Should Probably Facilitate The Common AES Phase Modules Here */
 
 /**
